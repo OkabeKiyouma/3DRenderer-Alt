@@ -17,7 +17,7 @@ struct Mesh {
   std::string texFile;
 
   bool LoadFromObjectFile(std::string sFileName, bool bHasTexture = false);
-  void Draw();
+  void Draw(bool drawTexture = true);
 };
 void ConvertNDCToViewportPixels(Triangle& triProjected, int ViewportWidth,
                                 int ViewportHeight);

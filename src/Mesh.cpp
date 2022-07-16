@@ -105,7 +105,7 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
   return true;
 }
 
-void Mesh::Draw() {
+void Mesh::Draw(bool drawTexture) {
   std::vector<FinalTriangle> vecTrianglesToRaster;
   for (auto& tri : tris) {
     Triangle triTransformed, triViewed, triProjected;
@@ -326,14 +326,19 @@ void Mesh::Draw() {
                            // TexturedTriangle(tri);
       // SDL_RenderGeometry(renderer.renderer, pipeline.model.texture, vert, 3,
       //                    nullptr, 0);
-      SDL_RenderGeometry(renderer.renderer, texture, vert, 3, nullptr, 0);
-      SDL_SetRenderDrawColor(renderer.renderer, 0, 0, 0, 0);
-      SDL_RenderDrawLineF(renderer.renderer, t.p[0].m[0], t.p[0].m[1],
-                          t.p[1].m[0], t.p[1].m[1]);
-      SDL_RenderDrawLineF(renderer.renderer, t.p[1].m[0], t.p[1].m[1],
-                          t.p[2].m[0], t.p[2].m[1]);
-      SDL_RenderDrawLineF(renderer.renderer, t.p[2].m[0], t.p[2].m[1],
-                          t.p[0].m[0], t.p[0].m[1]);
+      if (drawTexture)
+        SDL_RenderGeometry(renderer.renderer, texture, vert, 3, nullptr, 0);
+      else
+        SDL_RenderGeometry(renderer.renderer, nullptr, vert, 3, nullptr, 0);
+      if (pipeline.wireFrame) {
+        SDL_SetRenderDrawColor(renderer.renderer, 0, 0, 0, 0);
+        SDL_RenderDrawLineF(renderer.renderer, t.p[0].m[0], t.p[0].m[1],
+                            t.p[1].m[0], t.p[1].m[1]);
+        SDL_RenderDrawLineF(renderer.renderer, t.p[1].m[0], t.p[1].m[1],
+                            t.p[2].m[0], t.p[2].m[1]);
+        SDL_RenderDrawLineF(renderer.renderer, t.p[2].m[0], t.p[2].m[1],
+                            t.p[0].m[0], t.p[0].m[1]);
+      }
     }
   }
 }

@@ -151,7 +151,7 @@ void Renderer::NewFrame() {
   ImGui::Begin("World Variables");
   ImGui::Text("This is some useful text.");
   ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
+  ImGui::Checkbox("Wireframe", &pipeline.wireFrame);
   ImGui::Text("Application average \n%.3f ms/frame (%.1f FPS)",
               1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
   ImGui::End();
