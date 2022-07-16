@@ -1,7 +1,7 @@
 #ifndef _CAMERA
 #define _CAMERA
-#include <SDL2/SDL.h>
-#include <SDL2_image/SDL_image.h>
+
+#include <stdint.h>
 
 #include "Kmath.h"
 
@@ -62,7 +62,7 @@ class Camera {
   // processes input received from any keyboard-like input system. Accepts input
   // parameter in the form of camera defined ENUM (to abstract it from windowing
   // systems)
-  void ProcessKeyboard(Camera_Movement direction, Uint64 deltaTime) {
+  void ProcessKeyboard(Camera_Movement direction, uint64_t deltaTime) {
     float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD) Position += Front * velocity;
     if (direction == BACKWARD) Position -= Front * velocity;

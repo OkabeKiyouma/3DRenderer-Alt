@@ -163,7 +163,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Pipeline.cpp" />
     <ClCompile Include="extern\src\imgui.cpp" />
     <ClCompile Include="extern\src\imgui_demo.cpp" />
     <ClCompile Include="extern\src\imgui_draw.cpp" />
@@ -176,7 +177,6 @@
     <ClCompile Include="src\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="includes\App.h" />
     <ClInclude Include="extern\includes\imconfig.h" />
     <ClInclude Include="extern\includes\imgui.h" />
     <ClInclude Include="extern\includes\imgui_impl_sdl.h" />
@@ -277,6 +277,10 @@
     <ClInclude Include="includes\Kmath.h" />
     <ClInclude Include="includes\Mesh.h" />
     <ClInclude Include="includes\Renderer.h" />
+    <ClInclude Include="includes\Pipeline.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\app.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

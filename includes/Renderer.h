@@ -1,17 +1,28 @@
 #ifndef _RENDERER
 #define _RENDERER
 
+#include <SDL2/SDL.h>
+#include <SDL2_image/SDL_image.h>
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_sdlrenderer.h>
 
-#include "Mesh.h"
+#include <string>
+
+#include "Pipeline.h"
+
+extern Pipeline pipeline;
 
 class Renderer {
  public:
   SDL_Window* window;
   std::string winName;
   SDL_Renderer* renderer;
+  SDL_Event event;
+  bool isApplicationRunning = true;
+  int ScreenWidth;
+  int ScreenHeight;
+
   ImGuiIO io;
 
   void Init(const char* windowName, int width, int height,
@@ -23,14 +34,11 @@ class Renderer {
                                     SDL_RENDERER_ACCELERATED));
 
   void Clear(Vec4 color);
+  void PollEvents();
+  void HandleInputs(SDL_Event& event, Uint64 deltaTime);
+  void NewFrame();
   void Present();
   void Destroy();
 };
 
-void ConvertNDCToViewportPixels(Triangle& triProjected, int ViewportWidth,
-                                int ViewportHeight);
-Vec4 VectorIntersectPlane(Vec4& planeP, Vec4& planeN, Vec4& lineStart,
-                          Vec4& lineEnd, float& t);
-int TriangleClipAgainstPlane(Vec4 planeP, Vec4 planeN, Triangle& inTri,
-                             Triangle& outTri1, Triangle& outTri2);
 #endif

@@ -45,6 +45,9 @@ void Renderer::Init(const char* windowName, int width, int height,
   // Setup Platform/Renderer backends
   ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
   ImGui_ImplSDLRenderer_Init(renderer);
+
+  this->ScreenWidth = width;
+  this->ScreenHeight = height;
 }
 
 void Renderer::Clear(Vec4 color) {
@@ -52,6 +55,107 @@ void Renderer::Clear(Vec4 color) {
                          (Uint8)(color.y * 255), (Uint8)(color.z * 255),
                          (Uint8)(color.w * 255));
   SDL_RenderClear(renderer);
+}
+
+void Renderer::PollEvents() {
+  while (SDL_PollEvent(&event)) {
+    ImGui_ImplSDL2_ProcessEvent(&event);
+    if (event.type == SDL_QUIT) isApplicationRunning = false;
+    if (event.type == SDL_WINDOWEVENT &&
+        event.window.event == SDL_WINDOWEVENT_CLOSE &&
+        event.window.windowID == SDL_GetWindowID(window))
+      isApplicationRunning = false;
+    if (event.type == SDL_WINDOWEVENT) {
+      float factorx = pipeline.viewportWidth / (float)ScreenWidth;
+      float factory = pipeline.viewportHeight / (float)ScreenHeight;
+      SDL_GetWindowSize(window, &ScreenWidth, &ScreenHeight);
+      pipeline.viewportWidth = factorx * ScreenWidth;
+      pipeline.viewportHeight = factory * ScreenHeight;
+      pipeline.fAspectRatio =
+          (float)pipeline.viewportWidth / (float)pipeline.viewportHeight;
+      if (pipeline.pDepthBuffer) delete[] pipeline.pDepthBuffer;
+      pipeline.pDepthBuffer =
+          new float[pipeline.viewportWidth * pipeline.viewportHeight];
+      SDL_SetWindowSize(window, ScreenWidth, ScreenHeight);
+    }
+    if (event.type == SDL_KEYDOWN) HandleInputs(event, 25.f);
+  }
+}
+
+void Renderer::HandleInputs(SDL_Event& event, Uint64 deltaTime) {
+  switch (event.key.keysym.sym) {
+    case SDLK_ESCAPE:
+      isApplicationRunning = false;
+      break;
+    case SDLK_w:
+      pipeline.camera.ProcessKeyboard(FORWARD, deltaTime);
+      // pipeline.camera.Position += pipeline.camera.Front * deltaTime / 5.f;
+      // pipeline.camera.updateCameraVectors();
+      break;
+    case SDLK_s:
+      pipeline.camera.ProcessKeyboard(BACKWARD, deltaTime);
+      // pipeline.camera.Position -= pipeline.camera.Front * deltaTime / 5.f;
+      // pipeline.camera.updateCameraVectors();
+      break;
+    case SDLK_a:
+      pipeline.camera.ProcessKeyboard(LEFT, deltaTime);
+      // pipeline.camera.Yaw -= deltaTime / 5.f;
+      // pipeline.camera.updateCameraVectors();
+      break;
+    case SDLK_d:
+      pipeline.camera.ProcessKeyboard(RIGHT, deltaTime);
+      // pipeline.camera.Yaw += deltaTime / 5.f;
+      // pipeline.camera.updateCameraVectors();
+      break;
+    case SDLK_LEFT:
+      // pipeline.camera.ProcessMouseMovement(-100 *
+      // pipeline.camera.MovementSpeed * deltaTime, 0.f,
+      //                             true);
+      pipeline.camera.Position.x -= deltaTime / 5.f;
+      break;
+    case SDLK_RIGHT:
+      // pipeline.camera.ProcessMouseMovement(100 *
+      // pipeline.camera.MovementSpeed * deltaTime, 0.f,
+      //                             true);
+      pipeline.camera.Position.x += deltaTime / 5.f;
+      break;
+    case SDLK_UP:
+      pipeline.camera.Position.y += deltaTime / 5.f;
+      // pipeline.camera.ProcessMouseMovement(0.f, 100 *
+      // pipeline.camera.MovementSpeed * deltaTime,
+      //                             true);
+      break;
+    case SDLK_DOWN:
+      pipeline.camera.Position.y -= deltaTime / 5.f;
+      // pipeline.camera.ProcessMouseMovement(0.f, -100 *
+      // pipeline.camera.MovementSpeed * deltaTime,
+      //                             true);
+      break;
+      break;
+  }
+  if (event.type == SDL_MOUSEMOTION) {
+    pipeline.camera.ProcessMouseMovement(event.motion.xrel, event.motion.yrel,
+                                         true);
+  }
+}
+
+void Renderer::NewFrame() {
+  // Start the Dear ImGui frame
+  ImGui_ImplSDLRenderer_NewFrame();
+  ImGui_ImplSDL2_NewFrame();
+  ImGui::NewFrame();
+  static float f = 0.0f;
+
+  ImGui::SetNextWindowPos(ImVec2((0.8f * ScreenWidth), 0));
+  ImGui::SetNextWindowSize(ImVec2((0.2f * ScreenWidth), ScreenHeight));
+  ImGui::Begin("World Variables");
+  ImGui::Text("This is some useful text.");
+  ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+  ImGui::Text("Application average \n%.3f ms/frame (%.1f FPS)",
+              1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+  ImGui::End();
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
 void Renderer::Present() {
@@ -75,154 +179,4 @@ void Renderer::Destroy() {
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
-}
-
-void ConvertNDCToViewportPixels(Triangle& triProjected, int ViewportWidth,
-                                int ViewportHeight) {
-  // Scale into view
-  triProjected.p[0] += Vec4{1.0f, 1.0f, 0.0f, 0.0f};
-  triProjected.p[1] += Vec4{1.0f, 1.0f, 0.0f, 0.0f};
-  triProjected.p[2] += Vec4{1.0f, 1.0f, 0.0f, 0.0f};
-
-  triProjected.p[0].x *= 0.5f * ViewportWidth;
-  triProjected.p[0].y *= 0.5f * ViewportHeight;
-  triProjected.p[1].x *= 0.5f * ViewportWidth;
-  triProjected.p[1].y *= 0.5f * ViewportHeight;
-  triProjected.p[2].x *= 0.5f * ViewportWidth;
-  triProjected.p[2].y *= 0.5f * ViewportHeight;
-}
-
-Vec4 VectorIntersectPlane(Vec4& planeP, Vec4& planeN, Vec4& lineStart,
-                          Vec4& lineEnd, float& t) {
-  planeN = NormalizeChecked(Vec3(planeN));
-  float planeD = -DotProduct(Vec3(planeN), Vec3(planeP));
-  float ad = DotProduct(Vec3(lineStart), Vec3(planeN));
-  float bd = DotProduct(Vec3(lineEnd), Vec3(planeN));
-  t = (-planeD - ad) / (bd - ad);
-  Vec4 lineStartToEnd = Vec3(lineEnd) - Vec3(lineStart);
-  Vec4 lineToIntersect = Vec3(lineStartToEnd) * t;
-  return Vec3(lineStart) + Vec3(lineToIntersect);
-}
-
-int TriangleClipAgainstPlane(Vec4 planeP, Vec4 planeN, Triangle& inTri,
-                             Triangle& outTri1, Triangle& outTri2) {
-  planeN = NormalizeChecked(Vec3(planeN));
-  auto dist = [&](Vec4& p) {
-    Vec4 n = NormalizeChecked(Vec3(p));
-    return (DotProduct(Vec3(planeN), Vec3(p)) -
-            DotProduct(Vec3(planeN), Vec3(planeP)));
-  };
-
-  // Create two temporary storage arrays to classify points either side of plane
-  // If distance sign is positive, point lies on "inside" of plane
-  Vec4* insidePoints[3];
-  int nInsidePointCount = 0;
-  Vec4* outsidePoints[3];
-  int nOutsidePointCount = 0;
-  Vec3* insideTex[3];
-  int nInsideTexCount = 0;
-  Vec3* outsideTex[3];
-  int nOutsideTexCount = 0;
-
-  // Get signed distance of each point in triangle to plane
-  float d0 = dist(inTri.p[0]);
-  float d1 = dist(inTri.p[1]);
-  float d2 = dist(inTri.p[2]);
-
-  if (d0 >= 0) {
-    insidePoints[nInsidePointCount++] = &inTri.p[0];
-    insideTex[nInsideTexCount++] = &inTri.tex[0];
-  } else {
-    outsidePoints[nOutsidePointCount++] = &inTri.p[0];
-    outsideTex[nOutsideTexCount++] = &inTri.tex[0];
-  }
-  if (d1 >= 0) {
-    insidePoints[nInsidePointCount++] = &inTri.p[1];
-    insideTex[nInsideTexCount++] = &inTri.tex[1];
-  } else {
-    outsidePoints[nOutsidePointCount++] = &inTri.p[1];
-    outsideTex[nOutsideTexCount++] = &inTri.tex[1];
-  }
-  if (d2 >= 0) {
-    insidePoints[nInsidePointCount++] = &inTri.p[2];
-    insideTex[nInsideTexCount++] = &inTri.tex[2];
-  } else {
-    outsidePoints[nOutsidePointCount++] = &inTri.p[2];
-    outsideTex[nOutsideTexCount++] = &inTri.tex[2];
-  }
-
-  // Now classify triangle points, and break the input triangle into
-  // smaller output triangles if required. There are four possible
-  // outcomes...
-
-  if (nInsidePointCount == 0) {
-    // All points lie on the outside of plane, so clip whole triangle
-    // It ceases to exist
-
-    return 0;  // No returned triangles are valid
-  }
-
-  if (nInsidePointCount == 3) {
-    // All points lie on the inside of plane, so do nothing
-    // and allow the triangle to simply pass through
-    outTri1 = inTri;
-
-    return 1;  // Just the one returned original triangle is valid
-  }
-
-  if (nInsidePointCount == 1 && nOutsidePointCount == 2) {
-    // Triangle should be clipped. As two points lie outside
-    // the plane, the triangle simply becomes a smaller triangle
-
-    // The inside point is valid, so keep that...
-    outTri1.p[0] = *insidePoints[0];
-    outTri1.tex[0] = *insideTex[0];
-
-    // but the two new points are at the locations where the
-    // original sides of the triangle (lines) intersect with the plane
-
-    float t;
-    outTri1.p[1] = VectorIntersectPlane(planeP, planeN, *insidePoints[0],
-                                        *outsidePoints[0], t);
-    outTri1.tex[1] = t * (*outsideTex[0] - *insideTex[0]) + *insideTex[0];
-
-    outTri1.p[2] = VectorIntersectPlane(planeP, planeN, *insidePoints[0],
-                                        *outsidePoints[1], t);
-    outTri1.tex[2] = t * (*outsideTex[1] - *insideTex[0]) + *insideTex[0];
-
-    return 1;  // Return the newly formed single triangle
-  }
-
-  if (nInsidePointCount == 2 && nOutsidePointCount == 1) {
-    // Triangle should be clipped. As two points lie inside the plane,
-    // the clipped triangle becomes a "quad". Fortunately, we can
-    // represent a quad with two new triangles
-
-    // The first triangle consists of the two inside points and a new
-    // point determined by the location where one side of the triangle
-    // intersects with the plane
-    outTri1.p[0] = *insidePoints[0];
-    outTri1.tex[0] = *insideTex[0];
-    outTri1.p[1] = *insidePoints[1];
-    outTri1.tex[1] = *insideTex[1];
-
-    float t;
-    outTri1.p[2] = VectorIntersectPlane(planeP, planeN, *insidePoints[0],
-                                        *outsidePoints[0], t);
-    outTri1.tex[2] = t * (*outsideTex[0] - *insideTex[0]) + *insideTex[0];
-
-    // The second triangle is composed of one of he inside points, a
-    // new point determined by the intersection of the other side of the
-    // triangle and the plane, and the newly created point above
-    outTri2.p[0] = *insidePoints[1];
-    outTri2.tex[0] = *insideTex[1];
-    outTri2.p[1] = outTri1.p[2];
-    outTri2.tex[1] = outTri1.tex[2];
-
-    outTri2.p[2] = VectorIntersectPlane(planeP, planeN, *insidePoints[1],
-                                        *outsidePoints[0], t);
-    outTri2.tex[2] = t * (*outsideTex[0] - *insideTex[1]) + *insideTex[1];
-
-    return 2;  // Return two newly formed triangles which form a quad
-  }
 }
