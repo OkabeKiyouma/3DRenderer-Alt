@@ -110,23 +110,10 @@ void Mesh::Draw() {
   for (auto& tri : tris) {
     Triangle triTransformed, triViewed, triProjected;
 
-    // World Co-ordinate
-
-    triTransformed.p[0] = pipeline.matWorld * tri.p[0];
-    triTransformed.p[1] = pipeline.matWorld * tri.p[1];
-    triTransformed.p[2] = pipeline.matWorld * tri.p[2];
-    triTransformed.tex[0] = tri.tex[0];
-    triTransformed.tex[1] = tri.tex[1];
-    triTransformed.tex[2] = tri.tex[2];
+    triTransformed = TriangleTransform(tri, pipeline.matWorld);
 
     // View Co-ordinate
-
-    triViewed.p[0] = pipeline.matView * triTransformed.p[0];
-    triViewed.p[1] = pipeline.matView * triTransformed.p[1];
-    triViewed.p[2] = pipeline.matView * triTransformed.p[2];
-    triViewed.tex[0] = triTransformed.tex[0];
-    triViewed.tex[1] = triTransformed.tex[1];
-    triViewed.tex[2] = triTransformed.tex[2];
+    triViewed = TriangleTransform(triTransformed, pipeline.matView);
 
     Vec3 normal;
     Vec4 line1, line2;
@@ -135,14 +122,12 @@ void Mesh::Draw() {
 
     normal = CrossProduct(Vec3(line1), Vec3(line2));
     normal = NormalizeChecked(normal);
-
-    // float decision =  // DotProduct(normal, (Vec3(-camera.Front)));
     float decision = DotProduct(
         normal, Vec3(triTransformed.p[0]) - pipeline.camera.Position);
-    //  DotProduct(normal, {0.f,0.f,-1.f});
+
     if (decision < 0.f) {
       // Color Generation
-      //{
+
       Vec3 lightDirection = {0.0f, 1.0f, -1.0f};
       lightDirection = NormalizeChecked(lightDirection);
 
@@ -165,17 +150,8 @@ void Mesh::Draw() {
       for (int n = 0; n < nClippedTriangles; n++) {
         // Perspective Projection
 
-        triProjected.p[0] = pipeline.matProj * clipped[n].p[0];
-        triProjected.p[1] = pipeline.matProj * clipped[n].p[1];
-        triProjected.p[2] = pipeline.matProj * clipped[n].p[2];
-        triProjected.tex[0] = clipped[n].tex[0];
-        triProjected.tex[1] = clipped[n].tex[1];
-        triProjected.tex[2] = clipped[n].tex[2];
-
+        triProjected = TriangleTransform(clipped[n], pipeline.matProj);
         // Perspective Division
-        triProjected.tex[0] /= triProjected.p[0].w;
-        triProjected.tex[1] /= triProjected.p[1].w;
-        triProjected.tex[2] /= triProjected.p[2].w;
         triProjected.p[0] /= triProjected.p[0].w;
         triProjected.p[1] /= triProjected.p[1].w;
         triProjected.p[2] /= triProjected.p[2].w;
@@ -187,6 +163,7 @@ void Mesh::Draw() {
         triProjected.p[1].y = -triProjected.p[1].y;
         triProjected.p[2].y = -triProjected.p[2].y;
 
+        // Z-correction
         triProjected.p[0].z = (pipeline.fFar + pipeline.fNear) /
                                   (pipeline.fFar - pipeline.fNear) +
                               1 / clipped[n].p[0].z *

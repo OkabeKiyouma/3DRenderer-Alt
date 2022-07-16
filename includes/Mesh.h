@@ -6,20 +6,10 @@
 
 #include "Camera.h"
 #include "Pipeline.h"
+#include "Primitives.h"
 #include "Renderer.h"
 extern Pipeline pipeline;
 extern Renderer renderer;
-
-struct Triangle {
-  Vec4 p[3];
-  Vec3 tex[3];
-};
-
-struct FinalTriangle {
-  Vec4 p[3];
-  Vec3 tex[3];
-  Vec4 col[3];
-};
 
 struct Mesh {
   std::vector<Triangle> tris;
