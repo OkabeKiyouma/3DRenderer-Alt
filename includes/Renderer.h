@@ -8,8 +8,10 @@
 #include <imgui_impl_sdlrenderer.h>
 
 #include <string>
+#include <vector>
 
 #include "Pipeline.h"
+#include "Primitives.h"
 
 extern Pipeline pipeline;
 
@@ -22,6 +24,7 @@ class Renderer {
   bool isApplicationRunning = true;
   int ScreenWidth;
   int ScreenHeight;
+  std::vector<FinalTriangle> vecTrianglesToRaster;
 
   ImGuiIO io;
 
@@ -40,5 +43,12 @@ class Renderer {
   void Present();
   void Destroy();
 };
+
+void ConvertNDCToViewportPixels(Triangle& triProjected, int ViewportWidth,
+                                int ViewportHeight);
+Vec4 VectorIntersectPlane(Vec4& planeP, Vec4& planeN, Vec4& lineStart,
+                          Vec4& lineEnd, float& t);
+int TriangleClipAgainstPlane(Vec4 planeP, Vec4 planeN, Triangle& inTri,
+                             Triangle& outTri1, Triangle& outTri2);
 
 #endif

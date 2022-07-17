@@ -87,9 +87,13 @@ int main(int, char**) {
     renderer.NewFrame();
     renderer.Clear(Vec4(0.46f, 0.54f, 0.6f, 1.0f));
     mesh.Draw();
+    Mat4 matScale2 = ScalingMat4(0.5f, 0.5f, 0.5f);
+    Mat4 matRotZ2 = RotationZ(DegreesToRadians(-10.f));
+    Mat4 matRotX2 = RotationX(DegreesToRadians(-10.f));
+    Mat4 matTrans2 = TranslationMat4(0.f, -5.f, 9.f);
+    Mat4 matWorld2 = matTrans2 * matRotX2 * matRotZ2 * matScale2;
+    pipeline.SetPipelineMatrix(matWorld2, matView, matProj);
     mesh2.Draw(false);
-
-    pipeline.SetPipelineMatrix(matWorld, matView, matProj);
     renderer.Present();
   }
 

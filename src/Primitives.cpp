@@ -8,5 +8,6 @@ Triangle TriangleTransform(Triangle t, Mat4 m) {
   Transformed.tex[0] = t.tex[0];
   Transformed.tex[1] = t.tex[1];
   Transformed.tex[2] = t.tex[2];
+  Transformed.texUnit = t.texUnit;
   return Transformed;
 }

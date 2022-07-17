@@ -25,3 +25,7 @@ void Pipeline::SetPipelineMatrix(Mat4 matWorld, Mat4 matView, Mat4 matProj) {
   this->matView = matView;
   this->matProj = matProj;
 }
+
+void Pipeline::BindTexture(int index, SDL_Texture* texture) {
+  textureUnit[index] = texture;
+}
