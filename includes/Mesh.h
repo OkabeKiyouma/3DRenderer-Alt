@@ -16,6 +16,7 @@ struct Mesh {
 
   bool LoadFromObjectFile(std::string sFileName, bool bHasTexture = false);
   void Draw(bool drawTexture = true);
+  void SetTexUnit(int index);
 };
 
 #endif

@@ -13,11 +13,11 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
   // Local cache of verts
   std::vector<Vec3> verts;
   std::vector<Vec2> texs;
-  int texIter = 0;
+  bool firstTex = true;
 
   while (!f.eof()) {
     char line[128];
-    if (texIter == 0) f.getline(line, 128);
+    if (firstTex) f.getline(line, 128);
 
     std::stringstream s;
     s << line;
@@ -46,6 +46,13 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
         mtl.getline(line, 128);
         std::stringstream s;
         s << line;
+        if (line[0] == 'n') {
+          s >> temp;
+          if (temp == "newmtl") {
+            s >> temp;
+            pipeline.texName.push_back(temp);
+          }
+        }
         if (line[0] == 'm') {
           s >> temp;
           if (temp == "map_Kd") {
@@ -81,7 +88,12 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
       }
     } else {
       if (line[0] == 'u') {
-        s >> junk;
+        firstTex = false;
+        std::string temp;
+        int sampler = -1;
+        s >> temp >> temp;
+        for (int i = 0; i < pipeline.texName.size(); i++)
+          if (pipeline.texName[i] == temp) sampler = i;
         while (f.getline(line, 128) && line[0] != 'f')
           ;
         do {
@@ -106,12 +118,11 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
                           Vec4(verts[stoi(tokens[6]) - 1]),
                           Vec3(texs[stoi(tokens[1]) - 1]),
                           Vec3(texs[stoi(tokens[4]) - 1]),
-                          Vec3(texs[stoi(tokens[7]) - 1]), texIter});
+                          Vec3(texs[stoi(tokens[7]) - 1]), sampler});
           if (f.eof()) return true;
           f.getline(line, 128);
           if (strlen(line) == 0) return true;
         } while (line[0] == 'f');
-        texIter++;
       }
     }
   }
@@ -203,4 +214,8 @@ void Mesh::Draw(bool drawTexture) {
       }
     }
   }
+}
+
+void Mesh::SetTexUnit(int index) {
+  for (auto& t : tris) t.texUnit = index;
 }

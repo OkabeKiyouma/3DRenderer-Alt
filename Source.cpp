@@ -67,6 +67,72 @@ int main(int, char**) {
 
   };
 
+  Mesh mesh3;
+  mesh3.tris = {
+      // SOUTH
+      {Vec4(0.0f, 0.0f, 0.0f, 1.0f), Vec4(0.0f, 1.0f, 0.0f, 1.0f),
+       Vec4(1.0f, 1.0f, 0.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(0.0f, 0.0f, 1.0f), Vec3(1.0f, 0.0f, 1.0f)},
+      {
+          Vec4(0.0f, 0.0f, 0.0f, 1.0f),
+          Vec4(1.0f, 1.0f, 0.0f, 1.0f),
+          Vec4(1.0f, 0.0f, 0.0f, 1.0f),
+          Vec3(0.0f, 1.0f, 1.0f),
+          Vec3(1.0f, 0.0f, 1.0f),
+          Vec3(1.0f, 1.0f, 1.0f),
+      },
+
+      // EAST
+      {Vec4(1.0f, 0.0f, 0.0f, 1.0f), Vec4(1.0f, 1.0f, 0.0f, 1.0f),
+       Vec4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(0.0f, 0.0f, 1.0f), Vec3(1.0f, 0.0f, 1.0f)},
+      {Vec4(1.0f, 0.0f, 0.0f, 1.0f), Vec4(1.0f, 1.0f, 1.0f, 1.0f),
+       Vec4(1.0f, 0.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(1.0f, 0.0f, 1.0f), Vec3(1.0f, 1.0f, 1.0f)},
+
+      // NORTH
+      {
+          Vec4(1.0f, 0.0f, 1.0f, 1.0f),
+          Vec4(1.0f, 1.0f, 1.0f, 1.0f),
+          Vec4(0.0f, 1.0f, 1.0f, 1.0f),
+          Vec3(0.0f, 1.0f, 1.0f),
+          Vec3(0.0f, 0.0f, 1.0f),
+          Vec3(1.0f, 0.0f, 1.0f),
+      },
+      {Vec4(1.0f, 0.0f, 1.0f, 1.0f), Vec4(0.0f, 1.0f, 1.0f, 1.0f),
+       Vec4(0.0f, 0.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(1.0f, 0.0f, 1.0f), Vec3(1.0f, 1.0f, 1.0f)},
+
+      // WEST
+      {Vec4(0.0f, 0.0f, 1.0f, 1.0f), Vec4(0.0f, 1.0f, 1.0f, 1.0f),
+       Vec4(0.0f, 1.0f, 0.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(0.0f, 0.0f, 1.0f), Vec3(1.0f, 0.0f, 1.0f)},
+      {Vec4(0.0f, 0.0f, 1.0f, 1.0f), Vec4(0.0f, 1.0f, 0.0f, 1.0f),
+       Vec4(0.0f, 0.0f, 0.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(1.0f, 0.0f, 1.0f), Vec3(1.0f, 1.0f, 1.0f)},
+
+      // TOP
+      {Vec4(0.0f, 1.0f, 0.0f, 1.0f), Vec4(0.0f, 1.0f, 1.0f, 1.0f),
+       Vec4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(0.0f, 0.0f, 1.0f), Vec3(1.0f, 0.0f, 1.0f)},
+      {Vec4(0.0f, 1.0f, 0.0f, 1.0f), Vec4(1.0f, 1.0f, 1.0f, 1.0f),
+       Vec4(1.0f, 1.0f, 0.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(1.0f, 0.0f, 1.0f), Vec3(1.0f, 1.0f, 1.0f)},
+
+      // BOTTOM
+      {Vec4(1.0f, 0.0f, 1.0f, 1.0f), Vec4(0.0f, 0.0f, 1.0f, 1.0f),
+       Vec4(0.0f, 0.0f, 0.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(0.0f, 0.0f, 1.0f), Vec3(1.0f, 0.0f, 1.0f)},
+      {Vec4(1.0f, 0.0f, 1.0f, 1.0f), Vec4(0.0f, 0.0f, 0.0f, 1.0f),
+       Vec4(1.0f, 0.0f, 0.0f, 1.0f), Vec3(0.0f, 1.0f, 1.0f),
+       Vec3(1.0f, 0.0f, 1.0f), Vec3(1.0f, 1.0f, 1.0f)},
+
+  };
+
+  int sampler = pipeline.BindTexture(
+      "test", IMG_LoadTexture(renderer.renderer, "res/images/test.jpg"));
+  mesh3.SetTexUnit(sampler);
+
   float fTheta = 0.01f;
   while (renderer.isApplicationRunning) {
     renderer.PollEvents();
@@ -94,6 +160,13 @@ int main(int, char**) {
     Mat4 matWorld2 = matTrans2 * matRotX2 * matRotZ2 * matScale2;
     pipeline.SetPipelineMatrix(matWorld2, matView, matProj);
     mesh2.Draw(false);
+    Mat4 matScale3 = ScalingMat4(0.5f, 0.5f, 0.5f);
+    Mat4 matRotZ3 = RotationZ(DegreesToRadians(-10.f));
+    Mat4 matRotX3 = RotationX(DegreesToRadians(-10.f));
+    Mat4 matTrans3 = TranslationMat4(0.f, 4.f, 9.f);
+    Mat4 matWorld3 = matTrans3 * matRotX * matRotZ;
+    pipeline.SetPipelineMatrix(matWorld3, matView, matProj);
+    mesh3.Draw();
     renderer.Present();
   }
 
