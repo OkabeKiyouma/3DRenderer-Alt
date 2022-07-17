@@ -78,6 +78,8 @@ void Renderer::PollEvents() {
           new float[pipeline.viewportWidth * pipeline.viewportHeight];
       SDL_SetWindowSize(window, ScreenWidth, ScreenHeight);
     }
+    // if (event.type == SDL_KEYDOWN || event.type == SDL_MOUSEMOTION)
+    //   HandleInputs(event, 25.f);
     if (event.type == SDL_KEYDOWN) HandleInputs(event, 25.f);
   }
 }
@@ -148,7 +150,9 @@ void Renderer::NewFrame() {
 
   ImGui::SetNextWindowPos(ImVec2((0.8f * ScreenWidth), 0));
   ImGui::SetNextWindowSize(ImVec2((0.2f * ScreenWidth), ScreenHeight));
-  ImGui::Begin("World Variables");
+  ImGui::Begin(
+      "World Variables", 0,
+      ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
   ImGui::Text("This is some useful text.");
   ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
   ImGui::Checkbox("Wireframe", &pipeline.wireFrame);

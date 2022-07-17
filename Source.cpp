@@ -23,47 +23,47 @@ int main(int, char**) {
                                            pipeline.fNear, pipeline.fFar);
     pipeline.SetPipelineMatrix(matWorld, matView, matProj);
   }
-
+  // SDL_SetRelativeMouseMode(SDL_TRUE);
   Mesh mesh;
   mesh.LoadFromObjectFile("res/models/cube/cube.obj", true);
 
   Mesh mesh2;
   mesh2.tris = {
       // SOUTH
-      {Vec4{0.0f, 0.0f, 0.0f, 1.0f}, Vec4{0.0f, 1.0f, 0.0f, 1.0f},
-       Vec4{1.0f, 1.0f, 0.0f, 1.0f}},
-      {Vec4{0.0f, 0.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 0.0f, 1.0f},
-       Vec4{1.0f, 0.0f, 0.0f, 1.0f}},
+      {{Vec4{0.0f, 0.0f, 0.0f, 1.0f}, Vec4{0.0f, 1.0f, 0.0f, 1.0f},
+        Vec4{1.0f, 1.0f, 0.0f, 1.0f}}},
+      {{Vec4{0.0f, 0.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 0.0f, 1.0f},
+        Vec4{1.0f, 0.0f, 0.0f, 1.0f}}},
 
       // EAST
-      {Vec4{1.0f, 0.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 0.0f, 1.0f},
-       Vec4{1.0f, 1.0f, 1.0f, 1.0f}},
-      {Vec4{1.0f, 0.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 1.0f, 1.0f},
-       Vec4{1.0f, 0.0f, 1.0f, 1.0f}},
+      {{Vec4{1.0f, 0.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 0.0f, 1.0f},
+        Vec4{1.0f, 1.0f, 1.0f, 1.0f}}},
+      {{Vec4{1.0f, 0.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 1.0f, 1.0f},
+        Vec4{1.0f, 0.0f, 1.0f, 1.0f}}},
 
       // NORTH
-      {Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{1.0f, 1.0f, 1.0f, 1.0f},
-       Vec4{0.0f, 1.0f, 1.0f, 1.0f}},
-      {Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 1.0f, 1.0f, 1.0f},
-       Vec4{0.0f, 0.0f, 1.0f, 1.0f}},
+      {{Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{1.0f, 1.0f, 1.0f, 1.0f},
+        Vec4{0.0f, 1.0f, 1.0f, 1.0f}}},
+      {{Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 1.0f, 1.0f, 1.0f},
+        Vec4{0.0f, 0.0f, 1.0f, 1.0f}}},
 
       // WEST
-      {Vec4{0.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 1.0f, 1.0f, 1.0f},
-       Vec4{0.0f, 1.0f, 0.0f, 1.0f}},
-      {Vec4{0.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 1.0f, 0.0f, 1.0f},
-       Vec4{0.0f, 0.0f, 0.0f, 1.0f}},
+      {{Vec4{0.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 1.0f, 1.0f, 1.0f},
+        Vec4{0.0f, 1.0f, 0.0f, 1.0f}}},
+      {{Vec4{0.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 1.0f, 0.0f, 1.0f},
+        Vec4{0.0f, 0.0f, 0.0f, 1.0f}}},
 
       // TOP
-      {Vec4{0.0f, 1.0f, 0.0f, 1.0f}, Vec4{0.0f, 1.0f, 1.0f, 1.0f},
-       Vec4{1.0f, 1.0f, 1.0f, 1.0f}},
-      {Vec4{0.0f, 1.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 1.0f, 1.0f},
-       Vec4{1.0f, 1.0f, 0.0f, 1.0f}},
+      {{Vec4{0.0f, 1.0f, 0.0f, 1.0f}, Vec4{0.0f, 1.0f, 1.0f, 1.0f},
+        Vec4{1.0f, 1.0f, 1.0f, 1.0f}}},
+      {{Vec4{0.0f, 1.0f, 0.0f, 1.0f}, Vec4{1.0f, 1.0f, 1.0f, 1.0f},
+        Vec4{1.0f, 1.0f, 0.0f, 1.0f}}},
 
       // BOTTOM
-      {Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 0.0f, 1.0f, 1.0f},
-       Vec4{0.0f, 0.0f, 0.0f, 1.0f}},
-      {Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 0.0f, 0.0f, 1.0f},
-       Vec4{1.0f, 0.0f, 0.0f, 1.0f}},
+      {{Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 0.0f, 1.0f, 1.0f},
+        Vec4{0.0f, 0.0f, 0.0f, 1.0f}}},
+      {{Vec4{1.0f, 0.0f, 1.0f, 1.0f}, Vec4{0.0f, 0.0f, 0.0f, 1.0f},
+        Vec4{1.0f, 0.0f, 0.0f, 1.0f}}},
 
   };
 
@@ -87,9 +87,9 @@ int main(int, char**) {
     renderer.NewFrame();
     renderer.Clear(Vec4(0.46f, 0.54f, 0.6f, 1.0f));
     mesh.Draw();
-
-    pipeline.SetPipelineMatrix(matTrans, matView, matProj);
     mesh2.Draw(false);
+
+    pipeline.SetPipelineMatrix(matWorld, matView, matProj);
     renderer.Present();
   }
 

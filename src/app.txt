@@ -1,0 +1,273 @@
+void App::TexturedTriangle(FinalTriangle t) {
+  auto swap = [](Vec4& p1, Vec4& p2) {
+    Vec4 temp = p1;
+    p1 = p2;
+    p2 = temp;
+  };
+
+  auto swap3 = [](Vec3& p1, Vec3& p2) {
+    Vec3 temp = p1;
+    p1 = p2;
+    p2 = temp;
+  };
+
+  auto swapf = [](float& a, float& b) {
+    float temp = a;
+    a = b;
+    b = temp;
+  };
+
+  auto swapi = [](int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+  };
+
+  if (t.p[1].y < t.p[0].y) {
+    swap(t.p[0], t.p[1]);
+    swap(t.col[0], t.col[1]);
+    swap3(t.tex[0], t.tex[1]);
+  }
+
+  if (t.p[2].y < t.p[0].y) {
+    swap(t.p[0], t.p[2]);
+    swap(t.col[0], t.col[2]);
+    swap3(t.tex[0], t.tex[2]);
+  }
+
+  if (t.p[2].y < t.p[1].y) {
+    swap(t.p[1], t.p[2]);
+    swap(t.col[1], t.col[2]);
+    swap3(t.tex[1], t.tex[2]);
+  }
+
+  int dy1 = int(t.p[1].y) - int(t.p[0].y);
+  int dx1 = int(t.p[1].x) - int(t.p[0].x);
+  float dz1 = t.p[1].z - t.p[0].z;
+  float dr1 = t.col[1].r - t.col[0].r;
+  float dg1 = t.col[1].g - t.col[0].g;
+  float db1 = t.col[1].b - t.col[0].b;
+  float da1 = t.col[1].a - t.col[0].a;
+  float du1 = t.tex[1].x - t.tex[0].x;
+  float dv1 = t.tex[1].y - t.tex[0].y;
+  float dw1 = t.tex[1].z - t.tex[0].z;
+
+  int dy2 = int(t.p[2].y) - int(t.p[0].y);
+  int dx2 = int(t.p[2].x) - int(t.p[0].x);
+  float dz2 = t.p[2].z - t.p[0].z;
+  float dr2 = t.col[2].r - t.col[0].r;
+  float dg2 = t.col[2].g - t.col[0].g;
+  float db2 = t.col[2].b - t.col[0].b;
+  float da2 = t.col[2].a - t.col[0].a;
+  float du2 = t.tex[2].x - t.tex[0].x;
+  float dv2 = t.tex[2].y - t.tex[0].y;
+  float dw2 = t.tex[2].z - t.tex[0].z;
+
+  float tex_u, tex_v, tex_w, pos_z, col_r, col_g, col_b, col_a;
+
+  float dx1_step = 0, dx2_step = 0, dz1_step = 0, dz2_step = 0, dr1_step = 0,
+        dr2_step = 0, dg1_step = 0, dg2_step = 0, db1_step = 0, db2_step = 0,
+        da1_step = 0, da2_step = 0, du1_step = 0, dv1_step = 0, du2_step = 0,
+        dv2_step = 0, dw1_step = 0, dw2_step = 0;
+
+  if (dy1) {
+    dx1_step = dx1 / (float)abs(dy1);
+    dz1_step = dz1 / (float)abs(dy1);
+    dr1_step = dr1 / (float)abs(dy1);
+    dg1_step = dg1 / (float)abs(dy1);
+    db1_step = db1 / (float)abs(dy1);
+    da1_step = da1 / (float)abs(dy1);
+    du1_step = du1 / (float)abs(dy1);
+    dv1_step = dv1 / (float)abs(dy1);
+    dw1_step = dw1 / (float)abs(dy1);
+  }
+
+  if (dy2) {
+    dx2_step = dx2 / (float)abs(dy2);
+    dz2_step = dz2 / (float)abs(dy2);
+    dr2_step = dr2 / (float)abs(dy2);
+    dg2_step = dg2 / (float)abs(dy2);
+    db2_step = db2 / (float)abs(dy2);
+    da2_step = da2 / (float)abs(dy2);
+
+    du2_step = du2 / (float)abs(dy2);
+    dv2_step = dv2 / (float)abs(dy2);
+    dw2_step = dw2 / (float)abs(dy2);
+  }
+
+  if (dy1) {
+    for (int i = t.p[0].y; i <= int(t.p[1].y); i++) {
+      int sx = int(t.p[0].x) + (float)(i - int(t.p[0].y)) * dx1_step;
+      int ex = int(t.p[0].x) + (float)(i - int(t.p[0].y)) * dx2_step;
+
+      float sz = t.p[0].z + (float)(i - int(t.p[0].y)) * dz1_step;
+      float ez = t.p[0].z + (float)(i - int(t.p[0].y)) * dz2_step;
+
+      float col_sr = t.col[0].r + (float)(i - t.p[0].y) * dr1_step;
+      float col_sg = t.col[0].g + (float)(i - t.p[0].y) * dg1_step;
+      float col_sb = t.col[0].b + (float)(i - t.p[0].y) * db1_step;
+      float col_sa = t.col[0].a + (float)(i - t.p[0].y) * da1_step;
+
+      float col_er = t.col[0].r + (float)(i - t.p[0].y) * dr2_step;
+      float col_eb = t.col[0].g + (float)(i - t.p[0].y) * dg2_step;
+      float col_eg = t.col[0].b + (float)(i - t.p[0].y) * db2_step;
+      float col_ea = t.col[0].a + (float)(i - t.p[0].y) * da2_step;
+
+      float tex_su = t.tex[0].x + (float)(i - t.p[0].y) * du1_step;
+      float tex_sv = t.tex[0].y + (float)(i - t.p[0].y) * dv1_step;
+      float tex_sw = t.tex[0].z + (float)(i - t.p[0].y) * dw1_step;
+
+      float tex_eu = t.tex[0].x + (float)(i - t.p[0].y) * du2_step;
+      float tex_ev = t.tex[0].y + (float)(i - t.p[0].y) * dv2_step;
+      float tex_ew = t.tex[0].z + (float)(i - t.p[0].y) * dw2_step;
+
+      if (sx > ex) {
+        swapi(sx, ex);
+        swapf(sz, ez);
+        swapf(col_sa, col_er);
+        swapf(col_sg, col_eg);
+        swapf(col_sb, col_eb);
+        swapf(col_sa, col_ea);
+        swapf(tex_su, tex_eu);
+        swapf(tex_sv, tex_ev);
+        swapf(tex_sw, tex_ew);
+      }
+
+      tex_u = tex_su;
+      tex_v = tex_sv;
+      tex_w = tex_sw;
+      col_r = col_sr;
+      col_g = col_sg;
+      col_b = col_sb;
+      col_a = col_sa;
+      pos_z = sz;
+
+      float tstep = 1.0f / ((float)(ex - sx));
+      float t = 0.0f;
+
+      for (int j = sx; j < ex; j++) {
+        tex_u = (1.0f - t) * tex_su + t * tex_eu;
+        tex_v = (1.0f - t) * tex_sv + t * tex_ev;
+        tex_w = (1.0f - t) * tex_sw + t * tex_ew;
+        col_r = (1.0f - t) * col_sr + t * col_er;
+        col_g = (1.0f - t) * col_sg + t * col_eg;
+        col_b = (1.0f - t) * col_sb + t * col_eb;
+        col_a = (1.0f - t) * col_sa + t * col_ea;
+        pos_z = (1.0 - t) * sz + t * ez;
+
+        // if (1) {
+        if (pos_z > pipeline.pDepthBuffer[i * pipeline.viewportWidth + j]) {
+          SDL_SetTextureColorMod(pipeline.model.texture, col_r, col_r, col_r);
+          // SDL_SetTextureColorMod(texture, 255, 255, 255);
+          SDL_Rect src = {tex_u / tex_w * 1920, tex_v / tex_w * 1080, 1, 1};
+          SDL_Rect dest = {j, i, 1, 1};
+          // SDL_RenderCopy(renderer.renderer, pipeline.model.texture, &src,
+          //                &dest);
+          SDL_SetRenderDrawColor(renderer.renderer, col_r, col_g, col_b, 255);
+          SDL_RenderDrawPoint(renderer.renderer, j, i);
+          pipeline.pDepthBuffer[i * pipeline.viewportWidth + j] = pos_z;
+        }
+        t += tstep;
+      }
+    }
+  }
+
+  dy1 = int(t.p[2].y) - int(t.p[1].y);
+  dx1 = int(t.p[2].x) - int(t.p[1].x);
+  dz1 = t.p[2].z - t.p[1].z;
+  dr1 = t.col[2].r - t.col[1].r;
+  dg1 = t.col[2].g - t.col[1].g;
+  db1 = t.col[2].b - t.col[1].b;
+  da1 = t.col[2].a - t.col[1].a;
+  du1 = t.tex[2].x - t.tex[1].x;
+  dv1 = t.tex[2].y - t.tex[1].y;
+  dw1 = t.tex[2].z - t.tex[1].z;
+
+  if (dy1) dx1_step = dx1 / (float)abs(dy1);
+  if (dy2) dx2_step = dx2 / (float)abs(dy2);
+
+  du1_step = 0, dv1_step = 0, dz1_step = 0, dr1_step = 0, db1_step = 0,
+  dg1_step = 0, da1_step = 0;
+  if (dy1) {
+    dz1_step = dz1 / (float)abs(dy1);
+    dr1_step = dr1 / (float)abs(dy1);
+    dg1_step = dg1 / (float)abs(dy1);
+    db1_step = db1 / (float)abs(dy1);
+    da1_step = da1 / (float)abs(dy1);
+    du1_step = du1 / (float)abs(dy1);
+    dv1_step = dv1 / (float)abs(dy1);
+    dw1_step = dw1 / (float)abs(dy1);
+
+    for (int i = t.p[1].y; i <= int(t.p[2].y); i++) {
+      int ax = int(t.p[1].x) + (float)(i - int(t.p[1].y)) * dx1_step;
+      int bx = int(t.p[0].x) + (float)(i - int(t.p[0].y)) * dx2_step;
+
+      float sz = t.p[1].z + (float)(i - int(t.p[1].y)) * dz1_step;
+      float col_sr = t.col[1].r + (float)(i - t.p[1].y) * du1_step;
+      float col_sg = t.col[1].g + (float)(i - t.p[1].y) * dv1_step;
+      float col_sb = t.col[1].b + (float)(i - t.p[1].y) * dw1_step;
+      float col_sa = t.col[1].a + (float)(i - t.p[1].y) * dw1_step;
+      float tex_su = t.tex[1].x + (float)(i - t.p[1].y) * du1_step;
+      float tex_sv = t.tex[1].y + (float)(i - t.p[1].y) * dv1_step;
+      float tex_sw = t.tex[1].z + (float)(i - t.p[1].y) * dw1_step;
+
+      float ez = t.p[0].z + (float)(i - int(t.p[0].y)) * dz2_step;
+      float col_er = t.col[0].r + (float)(i - t.p[0].y) * du1_step;
+      float col_eg = t.col[0].g + (float)(i - t.p[0].y) * dv1_step;
+      float col_eb = t.col[0].b + (float)(i - t.p[0].y) * dw1_step;
+      float col_ea = t.col[0].a + (float)(i - t.p[0].y) * dw1_step;
+      float tex_eu = t.tex[0].x + (float)(i - t.p[0].y) * du2_step;
+      float tex_ev = t.tex[0].y + (float)(i - t.p[0].y) * dv2_step;
+      float tex_ew = t.tex[0].z + (float)(i - t.p[0].y) * dw2_step;
+
+      if (ax > bx) {
+        swapi(ax, bx);
+        swapf(sz, ez);
+        swapf(col_sr, col_er);
+        swapf(col_sg, col_eg);
+        swapf(col_sb, col_eb);
+        swapf(col_sa, col_ea);
+        swapf(tex_su, tex_eu);
+        swapf(tex_sv, tex_ev);
+        swapf(tex_sw, tex_ew);
+      }
+
+      col_r = col_sr;
+      col_g = col_sg;
+      col_b = col_sb;
+      col_a = col_sa;
+      tex_u = tex_su;
+      tex_v = tex_sv;
+      tex_w = tex_sw;
+      pos_z = sz;
+
+      float tstep = 1.0f / ((float)(bx - ax));
+      float t = 0.0f;
+
+      for (int j = ax; j < bx; j++) {
+        col_r = (1.0f - t) * col_sr + t * col_er;
+        col_g = (1.0f - t) * col_sg + t * col_eg;
+        col_b = (1.0f - t) * col_sb + t * col_eb;
+        col_a = (1.0f - t) * col_sa + t * col_ea;
+        tex_u = (1.0f - t) * tex_su + t * tex_eu;
+        tex_v = (1.0f - t) * tex_sv + t * tex_ev;
+        tex_w = (1.0f - t) * tex_sw + t * tex_ew;
+        pos_z = (1.0 - t) * sz + t * ez;
+
+        // if (1) {
+        if (pos_z > pipeline.pDepthBuffer[i * pipeline.viewportWidth + j]) {
+          SDL_SetTextureColorMod(pipeline.model.texture, col_r, col_r, col_r);
+          // SDL_SetTextureColorMod(texture, 255, 255, 255);
+          SDL_Rect src = {tex_u / tex_w * 1920, tex_v / tex_w * 1080, 1, 1};
+          SDL_Rect dest = {j, i, 1, 1};
+          SDL_SetRenderDrawColor(renderer.renderer, col_r, col_g, col_b, 255);
+          SDL_RenderDrawPoint(renderer.renderer, j, i);
+          // SDL_RenderCopy(renderer.renderer, pipeline.model.texture, &src,
+          //               &dest);
+          pipeline.pDepthBuffer[i * pipeline.viewportWidth + j] = pos_z;
+        }
+        t += tstep;
+      }
+    }
+  }
+}

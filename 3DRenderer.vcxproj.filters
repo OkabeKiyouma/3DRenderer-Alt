@@ -366,4 +366,25 @@
   <ItemGroup>
     <Text Include="src\app.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="res\models\axis.obj" />
+    <Object Include="res\models\backpack.obj" />
+    <Object Include="res\models\mountains.obj" />
+    <Object Include="res\models\SpaceShip.obj" />
+    <Object Include="res\models\teapot.obj" />
+    <Object Include="res\models\terrain\terrain.obj" />
+    <Object Include="res\models\cube\cube.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\models\terrain\terrain.mtl" />
+    <None Include="res\models\cube\cube.mtl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\models\terrain\GOOGLE_SAT_WM.tif">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\cube\wallpaperflare.com_wallpaper.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

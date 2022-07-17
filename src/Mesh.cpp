@@ -37,8 +37,7 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
         mtlFile += it->str() + "/";
       }
       s >> temp;
-      mtlFile += temp;
-      std::ifstream mtl(mtlFile, std::ifstream::in);
+      std::ifstream mtl(mtlFile + temp, std::ifstream::in);
       if (!mtl.is_open()) {
         printf("Couldn't open %s", mtlFile.c_str());
         continue;
@@ -51,7 +50,8 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
           s >> temp;
           if (temp == "map_Kd") {
             s >> texFile;
-            texture = IMG_LoadTexture(renderer.renderer, texFile.c_str());
+            texture =
+                IMG_LoadTexture(renderer.renderer, (mtlFile + texFile).c_str());
           }
         }
       }
@@ -324,8 +324,7 @@ void Mesh::Draw(bool drawTexture) {
       tri.col[2].b = 255;  // triProjected.col[2].b;
       tri.col[2].a = 255;  // triProjected.col[2].a;
                            // TexturedTriangle(tri);
-      // SDL_RenderGeometry(renderer.renderer, pipeline.model.texture, vert, 3,
-      //                    nullptr, 0);
+
       if (drawTexture)
         SDL_RenderGeometry(renderer.renderer, texture, vert, 3, nullptr, 0);
       else
