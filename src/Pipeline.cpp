@@ -1,6 +1,7 @@
 #include "Pipeline.h"
 
 #include <string>
+#include <cstring>
 
 void Pipeline::InitPipeline(int viewportWidth, int viewportHeight,
                             Camera camera, float fNear, float fFar,

@@ -33,7 +33,7 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
       std::sregex_token_iterator it(sFileName.begin(), sFileName.end(), re, -1);
       std::sregex_token_iterator reg_end;
       for (; it != reg_end; ++it) {
-        if (std::regex_match(it->str(), std::regex(".*\.(obj)"))) break;
+        if (std::regex_match(it->str(), std::regex(".*\\.(obj)"))) break;
         mtlFile += it->str() + "/";
       }
       s >> temp;

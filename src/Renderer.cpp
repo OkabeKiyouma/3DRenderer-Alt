@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-#include < list>
+#include <list>
 #include <algorithm>
 
 void Renderer::Init(const char* windowName, int width, int height,

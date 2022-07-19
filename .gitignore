@@ -363,3 +363,15 @@ MigrationBackup/
 FodyWeavers.xsd
 build
 extern
+/CMakeFiles
+/premake5.lua
+/Makefile
+/cmake_install.cmake
+/CMakeLists.txt
+/CMakeCache.txt
+/*.txt
+/SDL2_image.dll
+/SDL2.dll
+/libwebp-7.dll
+/libtiff-5.dll
+/done.exe

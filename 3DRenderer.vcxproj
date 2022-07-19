@@ -281,9 +281,6 @@
     <ClInclude Include="includes\Pipeline.h" />
     <ClInclude Include="includes\Primitives.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\app.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
