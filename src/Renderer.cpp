@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
-#include <list>
 #include <algorithm>
+#include <list>
 
 void Renderer::Init(const char* windowName, int width, int height,
                     SDL_WindowFlags window_flags,
@@ -156,9 +156,12 @@ void Renderer::NewFrame() {
   ImGui::Begin(
       "World Variables", 0,
       ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
-  ImGui::Text("This is some useful text.");
-  ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
   ImGui::Checkbox("Wireframe", &pipeline.wireFrame);
+  ImGui::SliderFloat3("Light\nPosition", pipeline.light.Pos.m, -10.f, 10.f);
+  ImGui::SliderFloat("Ambient\nStength", &pipeline.light.Ka, 0.f, 1.f);
+  ImGui::SliderFloat("Diffuse\nStength", &pipeline.light.Kd, 0.f, 1.f);
+  ImGui::SliderFloat("Specular\nStength", &pipeline.light.Ks, 0.f, 1.f);
+  ImGui::SliderInt("Alpha", &pipeline.light.alpha, 1, 32);
   ImGui::Text("Application average \n%.3f ms/frame (%.1f FPS)",
               1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
   ImGui::End();

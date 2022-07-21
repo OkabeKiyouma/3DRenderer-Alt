@@ -3,6 +3,7 @@
 #include <fstream>
 #include <regex>
 #include <sstream>
+
 bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
   std::ifstream f(sFileName, std::ifstream::in);
   if (!f.is_open()) {
@@ -130,6 +131,50 @@ bool Mesh::LoadFromObjectFile(std::string sFileName, bool bHasTexture) {
   return true;
 }
 
+void calculatePointLightsIllum(Triangle& t, Vec3 normal, Vec4 color[3]) {
+  float ambientIllum = pipeline.light.Ka;
+
+  Vec3 lightDirection = pipeline.light.Pos - Vec3(t.p[0]);
+  Vec3 viewPos = pipeline.camera.Position - Vec3(t.p[0]);
+  lightDirection = NormalizeChecked(lightDirection);
+  float diffuseIllum =
+      pipeline.light.Kd * Maximum(0.0f, DotProduct(lightDirection, normal));
+  Vec3 reflectedDir =
+      2 * DotProduct(lightDirection, normal) * normal - lightDirection;
+  float specularIllum =
+      pipeline.light.Ks *
+      powf(DotProduct(reflectedDir, viewPos), pipeline.light.alpha);
+  color[0] =
+      Vec4((ambientIllum + diffuseIllum + specularIllum) * pipeline.light.Color,
+           255);
+
+  lightDirection = pipeline.light.Pos - Vec3(t.p[1]);
+  viewPos = pipeline.camera.Position - Vec3(t.p[1]);
+  lightDirection = NormalizeChecked(lightDirection);
+  diffuseIllum =
+      pipeline.light.Kd * Maximum(0.0f, DotProduct(lightDirection, normal));
+  reflectedDir =
+      2 * DotProduct(lightDirection, normal) * normal - lightDirection;
+  specularIllum = pipeline.light.Ks *
+                  powf(DotProduct(reflectedDir, viewPos), pipeline.light.alpha);
+  color[1] =
+      Vec4((ambientIllum + diffuseIllum + specularIllum) * pipeline.light.Color,
+           255);
+
+  lightDirection = pipeline.light.Pos - Vec3(t.p[2]);
+  viewPos = pipeline.camera.Position - Vec3(t.p[2]);
+  lightDirection = NormalizeChecked(lightDirection);
+  diffuseIllum =
+      pipeline.light.Kd * Maximum(0.0f, DotProduct(lightDirection, normal));
+  reflectedDir =
+      2 * DotProduct(lightDirection, normal) * normal - lightDirection;
+  specularIllum = pipeline.light.Ks *
+                  powf(DotProduct(reflectedDir, viewPos), pipeline.light.alpha);
+  color[2] =
+      Vec4((ambientIllum + diffuseIllum + specularIllum) * pipeline.light.Color,
+           255);
+}
+
 void Mesh::Draw(bool drawTexture) {
   for (auto& tri : tris) {
     Triangle triTransformed, triViewed, triProjected;
@@ -149,21 +194,26 @@ void Mesh::Draw(bool drawTexture) {
     float decision = DotProduct(
         normal, Vec3(triTransformed.p[0]) - pipeline.camera.Position);
 
+    // Back Face Detection
     if (decision < 0.f) {
       // Color Generation
 
-      Vec3 lightDirection = {0.0f, 1.0f, -1.0f};
-      lightDirection = NormalizeChecked(lightDirection);
-
-      float dotProduct = Maximum(0.0f, DotProduct(lightDirection, normal));
-
       Vec4 color[3];
-      color[0] =
-          Vec4(Vec3{255 * dotProduct, 255 * dotProduct, 255 * dotProduct}, 255);
-      color[1] =
-          Vec4(Vec3{255 * dotProduct, 255 * dotProduct, 255 * dotProduct}, 255);
-      color[2] =
-          Vec4(Vec3{255 * dotProduct, 255 * dotProduct, 255 * dotProduct}, 255);
+      calculatePointLightsIllum(triTransformed, normal, color);
+      // Vec3 lightDirection = pipeline.light.Pos - Vec3(triTransformed.p[0]);
+      // lightDirection = NormalizeChecked(lightDirection);
+      // float dotProduct = Maximum(0.0f, DotProduct(lightDirection, normal));
+      // color[0] = Vec4(dotProduct * pipeline.light.Color, 255);
+      //
+      // lightDirection = pipeline.light.Pos - Vec3(triTransformed.p[1]);
+      // lightDirection = NormalizeChecked(lightDirection);
+      // dotProduct = Maximum(0.0f, DotProduct(lightDirection, normal));
+      // color[1] = Vec4(dotProduct * pipeline.light.Color, 255);
+      //
+      // lightDirection = pipeline.light.Pos - Vec3(triTransformed.p[2]);
+      // lightDirection = NormalizeChecked(lightDirection);
+      // dotProduct = Maximum(0.0f, DotProduct(lightDirection, normal));
+      // color[2] = Vec4(dotProduct * pipeline.light.Color, 255);
 
       int nClippedTriangles = 0;
       Triangle clipped[2];
