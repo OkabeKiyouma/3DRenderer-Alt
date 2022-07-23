@@ -8,7 +8,7 @@
 #include "Camera.h"
 
 struct Light {
-  Vec3 Pos = {0.f, -2.f, -1.f};
+  Vec3 Pos = {0.f, 0.f, -1.f};
   Vec3 Color = {255.f, 255.f, 255.f};
   float Ka = 0.1f;
   float Kd = 0.9f;

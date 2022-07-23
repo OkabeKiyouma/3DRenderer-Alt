@@ -33,8 +33,7 @@ class Renderer {
                 (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE |
                                   SDL_WINDOW_ALLOW_HIGHDPI),
             SDL_RendererFlags renderer_flags =
-                (SDL_RendererFlags)(SDL_RENDERER_PRESENTVSYNC |
-                                    SDL_RENDERER_ACCELERATED));
+                (SDL_RendererFlags)(SDL_RENDERER_ACCELERATED));
 
   void Clear(Vec4 color);
   void PollEvents();
